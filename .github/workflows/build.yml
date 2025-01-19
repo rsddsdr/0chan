@@ -1,0 +1,51 @@
+name: build & pull to ghcr
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  FRONTEND_IMAGE_NAME: frontend
+  BACKEND_IMAGE_NAME: backend
+  STORAGE_IMAGE_NAME: storage
+  TORGATE_IMAGE_NAME: torgate
+
+jobs:
+  buildx:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        
+# Build
+      -
+        name: Build frontend
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/$FRONTEND_IMAGE_NAME:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE frontend/. --push -f frontend/Dockerfile
+      -
+        name: Build backend
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/$BACKEND_IMAGE_NAME:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE backend/. --push -f backend/Dockerfile
+      -
+        name: Build storage
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/$STORAGE_IMAGE_NAME:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE storage/. --push -f storage/Dockerfile
+      -
+        name: Build torgate
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/$TORGATE_IMAGE_NAME:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE torgate/. --push -f torgate/Dockerfile

@@ -1,0 +1,118 @@
+services:
+
+  frontend:
+    build: ./frontend
+    image: ${REGISTRY_PATH}/frontend:latest
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - storage
+    volumes:
+      - images:/images
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.nc.role == front
+      update_config:
+        parallelism: 1
+
+  backend:
+    build: ./backend
+    image: ${REGISTRY_PATH}/backend:latest
+    container_name: backend
+    depends_on:
+      - db
+      - cache
+    volumes:
+      - images:/images
+    env_file:
+      - .env
+    deploy:
+      placement:
+        constraints:
+          - node.labels.nc.role == main
+      update_config:
+        parallelism: 1
+        delay: 2s
+        monitor: 2s
+
+  storage:
+    build: ./storage
+    image: ${REGISTRY_PATH}/storage:latest
+    container_name: storage
+    ports:
+      - target: 81
+        published: 359
+        protocol: tcp
+        mode: host
+    environment:
+      - "DISCOVER=storage"
+    volumes:
+      - storage:/storage
+    env_file:
+      - .env
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.nc.role == storage
+      update_config:
+        parallelism: 1
+        delay: 5s
+        monitor: 5s
+      restart_policy:
+        condition: on-failure
+
+  torgate:
+    build: ./torgate
+    image: ${REGISTRY_PATH}/torgate:latest
+    container_name: torgate
+    depends_on:
+      - frontend
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.nc.role == front
+      update_config:
+        parallelism: 1
+        delay: 2s
+        monitor: 2s
+
+  db:
+    image: postgres:17
+    container_name: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    deploy:
+      placement:
+        constraints:
+          - node.labels.nc.role == main
+
+  cache:
+    image: redis
+    container_name: cache
+    deploy:
+      placement:
+          constraints:
+            - node.labels.nc.role == main
+    
+
+volumes:
+  images:
+    driver: local
+  db_data:
+  storage:
