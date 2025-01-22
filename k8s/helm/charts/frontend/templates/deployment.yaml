@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+items:
+
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    replicas: {{ .Values.replicaCount }}
+    selector:
+      matchLabels:
+        app: {{ .Chart.Name }}
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+    template:
+      metadata:
+        labels:
+          app: {{ .Chart.Name }}
+      spec:
+        hostname: {{ .Chart.Name }}
+        restartPolicy: {{ .Values.restartPolicy }}        
+        containers:
+        - name: {{ .Values.image.name }}
+          image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          volumeMounts:
+            - mountPath: /images
+              name: pv-images
+        volumes:
+          - name: pv-images
+            persistentVolumeClaim:
+              claimName: pvc-images
+              readOnly: false
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    selector:
+      app: {{ .Chart.Name }}
+    clusterIP: None
+
+kind: List
+metadata: {}

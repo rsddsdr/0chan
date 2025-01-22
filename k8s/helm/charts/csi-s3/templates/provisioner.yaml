@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-s3-provisioner-sa
+  namespace: {{ .Release.Namespace }}
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-s3-external-provisioner-runner
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["list", "watch", "create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-s3-provisioner-role
+subjects:
+  - kind: ServiceAccount
+    name: csi-s3-provisioner-sa
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: csi-s3-external-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: csi-s3-provisioner
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: csi-s3-provisioner
+spec:
+  selector:
+    app: csi-s3-provisioner
+  ports:
+    - name: csi-s3-dummy
+      port: 65535
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: csi-s3-provisioner
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceName: "csi-provisioner-s3"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csi-s3-provisioner
+  template:
+    metadata:
+      labels:
+        app: csi-s3-provisioner
+    spec:
+      serviceAccount: csi-s3-provisioner-sa
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+        - key: CriticalAddonsOnly
+          operator: Exists
+        {{- with .Values.tolerations.controller }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: csi-provisioner
+          image: {{ .Values.images.provisioner }}
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--v=4"
+          env:
+            - name: ADDRESS
+              value: {{ .Values.kubeletPath }}/plugins/ru.yandex.s3.csi/csi.sock
+          imagePullPolicy: "IfNotPresent"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: {{ .Values.kubeletPath }}/plugins/ru.yandex.s3.csi
+        - name: csi-s3
+          image: {{ .Values.images.csi }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--nodeid=$(NODE_ID)"
+            - "--v=4"
+          env:
+            - name: CSI_ENDPOINT
+              value: unix://{{ .Values.kubeletPath }}/plugins/ru.yandex.s3.csi/csi.sock
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: socket-dir
+              mountPath: {{ .Values.kubeletPath }}/plugins/ru.yandex.s3.csi
+      volumes:
+        - name: socket-dir
+          emptyDir: {}

@@ -1,0 +1,7 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/rsddsdr/0chan
+  name: storage
+  tag: "latest"
+  pullPolicy: Always

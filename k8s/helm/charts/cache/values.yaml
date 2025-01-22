@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  name: redis
+  tag: "latest"
+  pullPolicy: IfNotPresent
