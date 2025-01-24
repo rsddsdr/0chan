@@ -29,14 +29,6 @@ items:
           ports:
           - containerPort: 80
             protocol: TCP
-          volumeMounts:
-            - mountPath: /images
-              name: pv-images
-        volumes:
-          - name: pv-images
-            persistentVolumeClaim:
-              claimName: pvc-images
-              readOnly: false
 
 - apiVersion: v1
   kind: Service
@@ -47,6 +39,20 @@ items:
     selector:
       app: {{ .Chart.Name }}
     clusterIP: None
+    
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Chart.Name }}-lb
+    namespace: {{ .Values.namespace }}
+  spec:
+    ports:
+    - port: 80
+      targetPort: 80
+    externalTrafficPolicy: Cluster
+    selector:
+      app: {{ .Chart.Name }}
+    type: LoadBalancer
 
 kind: List
 metadata: {}

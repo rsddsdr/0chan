@@ -15,16 +15,14 @@ nullSecrets:
     torgatePublicKey: TORGATE_PUBLIC_KEY
     torgatePrivateKey: TORGATE_PRIVATE_KEY
     
+image:
+  repository: ghcr.io/rsddsdr/0chan
+    
 storageClass:
-  local:
-    name: "nullchan-ssd"
-    accessMode: "ReadWriteOnce"
-    pods:
-      storage:
-        requestSpace: 20Gi
-      db:
-        requestSpace: 5Gi
-  yc:
-    name: "csi-s3"
-    accessMode: ReadWriteMany
-    requestSpace: 1Gi
+  name: "0chan-default-sc"
+  accessMode: "ReadWriteOnce"
+  pods:
+    storage:
+      requestSpace: 20Gi
+    db:
+      requestSpace: 5Gi

@@ -61,14 +61,6 @@ items:
               secretKeyRef:
                 key: {{ .Values.nullSecrets.envName.postgresPasswd }}
                 name: {{ .Values.nullSecrets.name }}
-          volumeMounts:
-            - mountPath: /images
-              name: pv-images
-        volumes:
-          - name: pv-images
-            persistentVolumeClaim:
-              claimName: pvc-images
-              readOnly: false
               
 - apiVersion: v1
   kind: Service

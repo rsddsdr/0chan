@@ -1,7 +1,6 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/rsddsdr/0chan
   name: torgate
   tag: "latest"
   pullPolicy: Always

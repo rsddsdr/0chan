@@ -2,5 +2,5 @@ replicaCount: 1
 
 image:
   name: redis
-  tag: "latest"
+  tag: "7"
   pullPolicy: IfNotPresent

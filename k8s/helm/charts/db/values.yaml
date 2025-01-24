@@ -1,7 +1,6 @@
 replicaCount: 1
 
 image:
-  repository: 
   name: postgres
   tag: "17-alpine"
   pullPolicy: IfNotPresent
