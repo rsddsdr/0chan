@@ -2,6 +2,7 @@
 !/.github
 !/.gitignore
 !/.env-dist
+!/README.md
 !/docker-compose.yaml
 !/frontend/build
 !/frontend/config
