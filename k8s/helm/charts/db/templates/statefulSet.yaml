@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+items:
+
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    replicas: {{ .Values.replicaCount }}
+    serviceName: "{{ .Chart.Name }}"
+    minReadySeconds: 10
+    selector:
+      matchLabels:
+        app: {{ .Chart.Name }}
+    template:
+      metadata:
+        labels:
+          app: {{ .Chart.Name }}
+      spec:
+        hostname: {{ .Chart.Name }}
+        restartPolicy: {{ .Values.restartPolicy }} 
+        terminationGracePeriodSeconds: 30
+        securityContext:
+          runAsUser: 70
+          fsGroup: 70
+        containers:
+        - name: {{ .Values.image.name }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          env:
+          - name: PGDATA
+            value: "/var/lib/postgresql/data/pgdata"
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                key: {{ .Values.nullSecrets.envName.postgresDb }}
+                name: {{ .Values.nullSecrets.name }}
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                key: {{ .Values.nullSecrets.envName.postgresUser }}
+                name: {{ .Values.nullSecrets.name }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: {{ .Values.nullSecrets.envName.postgresPasswd }}
+                name: {{ .Values.nullSecrets.name }}
+          volumeMounts:
+          - name: {{ .Chart.Name }}-pv
+            mountPath: /var/lib/postgresql/data
+    volumeClaimTemplates:
+    - metadata:
+        name: {{ .Chart.Name }}-pv
+      spec:
+        accessModes: [ {{ .Values.storageClass.accessMode }} ]
+        storageClassName: {{ .Values.storageClass.name }}
+        resources:
+          requests:
+            storage: {{ .Values.storageClass.pods.db.requestSpace }}
+        volumeMode: Filesystem
+            
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    selector:
+      app: {{ .Chart.Name }}
+    clusterIP: None
+    
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Chart.Name }}-lb
+    namespace: {{ .Values.namespace }}
+    labels:
+      app: {{ .Chart.Name }}
+  spec:
+    ports:
+    - port: 5432
+      targetPort: 5432
+    externalTrafficPolicy: Cluster
+    selector:
+      app: {{ .Chart.Name }}
+    type: LoadBalancer
+
+kind: List
+metadata: {}

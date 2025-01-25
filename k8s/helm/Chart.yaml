@@ -1,0 +1,27 @@
+apiVersion: v2
+name: 0chan
+description: 0chan k8s helm chart.
+
+dependencies:
+  - name: frontend
+    repository: file://charts/frontend
+    version: ~0
+  - name: backend
+    repository: file://charts/backend
+    version: ~0
+  - name: storage
+    repository: file://charts/storage
+    version: ~0
+  - name: db
+    repository: file://charts/db
+    version: ~0
+  - name: cache
+    repository: file://charts/cache
+    version: ~0
+  - name: torgate
+    repository: file://charts/torgate
+    version: ~0
+
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

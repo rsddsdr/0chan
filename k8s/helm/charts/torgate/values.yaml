@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  name: torgate
+  tag: "latest"
+  pullPolicy: Always

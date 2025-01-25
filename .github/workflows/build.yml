@@ -1,4 +1,4 @@
-name: build & pull to ghcr
+name: ghcr ci
 
 on:
   push:

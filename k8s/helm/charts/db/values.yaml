@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  name: postgres
+  tag: "17-alpine"
+  pullPolicy: IfNotPresent

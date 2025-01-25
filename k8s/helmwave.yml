@@ -1,0 +1,53 @@
+project: "0chan"
+version: "0.1.0"
+
+.options: &options
+  namespace: nullchan
+  wait: true
+  max_history: 3
+
+releases:
+
+  - name: frontend
+    <<: *options
+    chart: helm/charts/frontend
+    values:
+    - src: helm/values.yaml
+    depends_on:
+      - helm/charts/backend
+      - helm/charts/storage
+
+  - name: backend
+    <<: *options
+    chart: helm/charts/backend
+    values:
+    - src: helm/values.yaml
+    depends_on:
+      - helm/charts/db
+      - helm/charts/cache
+
+  - name: storage
+    <<: *options
+    chart: helm/charts/storage
+    values:
+    - src: helm/values.yaml
+
+  - name: db
+    <<: *options
+    chart: helm/charts/db
+    values:
+    - src: helm/values.yaml
+
+  - name: cache
+    <<: *options
+    chart: helm/charts/cache
+    values:
+    - src: helm/values.yaml
+
+  - name: torgate
+    <<: *options
+    chart: helm/charts/torgate
+    values:
+    - src: helm/values.yaml
+    depends_on:
+      - helm/charts/frontend

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cache
+description: 0chan cache subchart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,28 @@
+namespace: nullchan
+restartPolicy: Always
+  
+nullSecrets:
+  name: nullchan-secrets
+  envName:
+    admingLogin: ADMIN_LOGIN
+    adminPasswd: ADMIN_PASSWD
+    salt: SALT
+    storageId: STORAGE_ID
+    postgresDb: POSTGRES_DB
+    postgresUser: POSTGRES_USER
+    postgresPasswd: POSTGRES_PASSWORD
+    torgateHostname: TORGATE_HOSTNAME
+    torgatePublicKey: TORGATE_PUBLIC_KEY
+    torgatePrivateKey: TORGATE_PRIVATE_KEY
+    
+image:
+  repository: ghcr.io/rsddsdr/0chan
+    
+storageClass:
+  name: "0chan-default-sc"
+  accessMode: "ReadWriteOnce"
+  pods:
+    storage:
+      requestSpace: 20Gi
+    db:
+      requestSpace: 5Gi

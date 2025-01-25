@@ -1,0 +1,6 @@
+replicaCount: 1
+
+image:
+  name: storage
+  tag: "latest"
+  pullPolicy: Always

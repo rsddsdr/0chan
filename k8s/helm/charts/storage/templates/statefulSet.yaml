@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+items:
+
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    replicas: {{ .Values.replicaCount }}
+    serviceName: "{{ .Chart.Name }}"
+    minReadySeconds: 10
+    selector:
+      matchLabels:
+        app: {{ .Chart.Name }}
+    template:
+      metadata:
+        labels:
+          app: {{ .Chart.Name }}
+      spec:
+        hostname: {{ .Chart.Name }}
+        restartPolicy: {{ .Values.restartPolicy }} 
+        terminationGracePeriodSeconds: 30
+        containers:
+        - name: {{ .Values.image.name }}
+          image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: 81
+          env:
+          - name: HOSTNAME
+            value: "storage"
+          - name: DISCOVER
+            value: "storage"
+          - name: STORAGE_ID
+            valueFrom:
+              secretKeyRef:
+                key: {{ .Values.nullSecrets.envName.storageId }}
+                name: {{ .Values.nullSecrets.name }}
+          - name: SALT
+            valueFrom:
+              secretKeyRef:
+                key: {{ .Values.nullSecrets.envName.salt }}
+                name: {{ .Values.nullSecrets.name }}
+          volumeMounts:
+          - name: {{ .Chart.Name }}-pv
+            mountPath: /storage
+    volumeClaimTemplates:
+    - metadata:
+        name: {{ .Chart.Name }}-pv
+      spec:
+        accessModes: [ {{ .Values.storageClass.accessMode }} ]
+        storageClassName: {{ .Values.storageClass.name }}
+        resources:
+          requests:
+            storage: {{ .Values.storageClass.pods.storage.requestSpace }}
+        volumeMode: Filesystem
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ .Chart.Name }}
+    namespace: {{ .Values.namespace }}
+  spec:
+    ports:
+    - name: {{ .Chart.Name }}-lb
+      port: 359
+      targetPort: 81
+    selector:
+      app: {{ .Chart.Name }}
+    clusterIP: None
+
+kind: List
+metadata: {}

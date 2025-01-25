@@ -1,0 +1,6 @@
+replicaCount: 2
+
+image:
+  name: backend
+  tag: "latest"
+  pullPolicy: Always
