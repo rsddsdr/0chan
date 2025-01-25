@@ -3,12 +3,6 @@ name: 0chan
 description: 0chan k8s helm chart.
 
 dependencies:
-  - name: sealed-secrets
-    repository: https://bitnami-labs.github.io/sealed-secrets
-    version: ~2
-  - name: csi-s3
-    repository: file://charts/csi-s3
-    version: ~0
   - name: frontend
     repository: file://charts/frontend
     version: ~0

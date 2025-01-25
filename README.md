@@ -4,7 +4,7 @@
 ██║██╔██║██║     ███████║█████╔╝ ██║   ██║
 ████╔╝██║██║     ██╔══██║██╔═██╗ ██║   ██║
 ╚██████╔╝╚██████╗██║  ██║██║  ██╗╚██████╔╝
- ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝                                    
+ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  
 ```
 ![CI](https://img.shields.io/github/actions/workflow/status/rsddsdr/0chan/build.yml?label=CI&logo=github&style=for-the-badge)
 
