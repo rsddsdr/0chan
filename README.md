@@ -12,7 +12,11 @@
 
 ### Docker compose way
 
-#### 1. Copy or rename `.env-dist` to `.env`. Then fill fields in  `.env`  with desired values
+#### 1. Prepare .env 
+```
+$ cp .env-dist .env
+```
+Then fill fields in `.env` by your text editor with needed values
 
 #### 2. Deploy
 ```
@@ -23,10 +27,9 @@ $ docker compose up -d
 ```
 $ docker exec -t backend /src/config/docker-entrypoint.sh createdb createadmin
 ```
-you can simply remove  `createadmin`  from this line, if you don't need admin account.
+you can simply remove  `createadmin`  from this line, if you don't need admin account
 
 frontend will appear on `http://localhost:80`
 
 ### K8S way
-
-#### See in https://github.com/rsddsdr/0chan/tree/main/k8s
+See in **https://github.com/rsddsdr/0chan/tree/main/k8s**

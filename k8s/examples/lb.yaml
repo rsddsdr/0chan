@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nullchan-lb
+  namespace: nullchan
+spec:
+  ports:
+  - name: frontend
+    port: 80
+    targetPort: 80
+  - name: db
+    port: 5432
+    targetPort: 5432
+  externalTrafficPolicy: Local
+  selector:
+    part-of: lb
+  type: LoadBalancer

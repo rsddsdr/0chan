@@ -9,9 +9,21 @@
 
 ## Setup
 
-#### 1. Rename or copy `.env-dist` to `.env`. Then fill fields in `.env` with desired values.
+#### 1. Prepare .env 
+```
+$ cp .env-dist .env
+```
+Then fill fields in `.env` by your text editor with needed values
 
-#### 2. Encrypt your secrets with sealed secrets. [Install it first](https://github.com/bitnami-labs/sealed-secrets/releases)
+#### 2. Create namespace
+Example is located in `examples/` directory
+```
+$ kubectl apply -f examples/ns.yaml
+```
+
+#### 3. Create secrets
+
+**(Optional)** Encrypt your secrets with sealed secrets. [Install it first](https://github.com/bitnami-labs/sealed-secrets/releases)
 ```
 $ kubeseal --fetch-cert --controller-name=sealed-secrets-controller --controller-namespace=kube-system > pub-sealed-secrets.pem
 $ kubectl create -n nullchan secret generic nullchan-secrets --from-env-file=.env --dry-run=client -o yaml > secrets.yaml
@@ -20,28 +32,30 @@ $ rm -f secrets.yaml
 $ kubectl apply -f encrypted_secrets.yaml
 ```
 
-or
-
-#### 2. Create opaque secrets
+Or you can just create opaque secrets:
 ```
 $ kubectl create -n nullchan secret generic nullchan-secrets --from-env-file=.env
 ```
 
-####  3.  Create storage class for your cloud ISP (or use default one)
-Examples is located in `examples/` directory
+#### 4. Create storage class (or use default one)
+Examples is located in `examples/sc` directory
 ```
-kubectl apply -f <provider-name>-sc.yaml
+$ kubectl apply -f examples/sc/<provisioner-name>-sc.yaml
 ```
 
-#### 4. Deploy
+#### 5. Deploy
 ```
 $ helmwave up --build
 ```
 
-#### 5. Setup db and admin account
+#### 6. Set up db and admin account
 ```
 $ kubectl exec -n nullchan -t deployments/backend -- /src/config/docker-entrypoint.sh createdb createadmin
 ```
-you can simply remove `createadmin` from this line. If you don't need admin account, of course.
+You can simply remove `createadmin` from this line, if you don't need admin account
 
-#### 6. Enjoy your ochko
+#### 7. (Optional) Expose to clearnet
+Example is located in `examples/` directory
+```
+$ kubectl apply -f examples/lb.yaml
+```

@@ -17,6 +17,7 @@ items:
       metadata:
         labels:
           app: {{ .Chart.Name }}
+          part-of: lb
       spec:
         hostname: {{ .Chart.Name }}
         restartPolicy: {{ .Values.restartPolicy }} 
@@ -72,22 +73,6 @@ items:
     selector:
       app: {{ .Chart.Name }}
     clusterIP: None
-    
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: {{ .Chart.Name }}-lb
-    namespace: {{ .Values.namespace }}
-    labels:
-      app: {{ .Chart.Name }}
-  spec:
-    ports:
-    - port: 5432
-      targetPort: 5432
-    externalTrafficPolicy: Cluster
-    selector:
-      app: {{ .Chart.Name }}
-    type: LoadBalancer
 
 kind: List
 metadata: {}

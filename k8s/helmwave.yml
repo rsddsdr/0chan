@@ -14,8 +14,8 @@ releases:
     values:
     - src: helm/values.yaml
     depends_on:
-      - helm/charts/backend
-      - helm/charts/storage
+      - backend
+      - storage
 
   - name: backend
     <<: *options
@@ -23,8 +23,8 @@ releases:
     values:
     - src: helm/values.yaml
     depends_on:
-      - helm/charts/db
-      - helm/charts/cache
+      - db
+      - cache
 
   - name: storage
     <<: *options
@@ -50,4 +50,4 @@ releases:
     values:
     - src: helm/values.yaml
     depends_on:
-      - helm/charts/frontend
+      - frontend

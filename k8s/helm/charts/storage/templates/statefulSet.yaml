@@ -62,10 +62,6 @@ items:
     name: {{ .Chart.Name }}
     namespace: {{ .Values.namespace }}
   spec:
-    ports:
-    - name: {{ .Chart.Name }}-lb
-      port: 359
-      targetPort: 81
     selector:
       app: {{ .Chart.Name }}
     clusterIP: None
