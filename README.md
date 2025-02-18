@@ -32,4 +32,4 @@ you can simply remove  `createadmin`  from this line, if you don't need admin ac
 frontend will appear on `http://localhost:80`
 
 ### K8S way
-See in **https://github.com/rsddsdr/0chan/tree/main/k8s**
+See in [/k8s](https://github.com/rsddsdr/0chan/tree/main/k8s)
