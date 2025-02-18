@@ -30,10 +30,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y && apt-get install -y nginx nginx-extras
 
+ADD ./deploy/docker-entrypoint.sh /docker-entrypoint.sh
 ADD ./deploy/nginx.conf /nginx.conf
 
 COPY --from=builder /builder/dist /dist
 
 EXPOSE 80
 
-CMD [ "nginx", "-c", "/nginx.conf" ]
+CMD [ "/bin/bash", "-c", "/docker-entrypoint.sh" ]

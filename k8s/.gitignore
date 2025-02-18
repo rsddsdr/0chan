@@ -1,0 +1,9 @@
+/*
+!/examples
+!/helm
+!/encrypted_secrets.yaml
+!/helmwave.yml
+!/pub-sealed-secrets.pem
+!/README.md
+!/.env-dist
+!/.gitignore

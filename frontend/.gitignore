@@ -1,0 +1,12 @@
+/*
+!/build
+!/config
+!/deploy
+!/src
+!/static
+!/Dockerfile
+!/index.html
+!/package.json
+!/.babelrc
+!/.editorconfig
+!/.gitignore
