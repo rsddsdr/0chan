@@ -6,7 +6,7 @@
 ╚██████╔╝╚██████╗██║  ██║██║  ██╗╚██████╔╝
  ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  
 ```
-![CI](https://img.shields.io/github/actions/workflow/status/rsddsdr/0chan/build.yml?label=CI&logo=github&style=for-the-badge)
+![CI](https://img.shields.io/github/actions/workflow/status/katzterd/0chan/build.yml?label=CI&logo=github&style=for-the-badge)
 
 ## Installation
 
@@ -32,4 +32,4 @@ you can simply remove  `createadmin`  from this line, if you don't need admin ac
 frontend will appear on `http://localhost:80`
 
 ### K8S way
-See in [/k8s](https://github.com/rsddsdr/0chan/tree/main/k8s)
+See in [/k8s](https://github.com/katzterd/0chan/tree/main/k8s)

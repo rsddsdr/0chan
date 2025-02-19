@@ -16,7 +16,7 @@ nullSecrets:
     torgatePrivateKey: TORGATE_PRIVATE_KEY
     
 image:
-  repository: ghcr.io/rsddsdr/0chan
+  repository: ghcr.io/katzterd/0chan
     
 storageClass:
   name: "0chan-default-sc"
