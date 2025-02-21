@@ -70,7 +70,9 @@ services:
     image: ${REGISTRY_PATH}/torgate:latest
     container_name: torgate
     depends_on:
-      - frontend
+      frontend:
+        condition: service_started
+        restart: false
     environment:
       TORGATE_ENDPOINT: "frontend:80"
     env_file:
